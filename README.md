@@ -1,16 +1,13 @@
-# pindur
+# Pindur
 
-A new Flutter project.
+## About
 
-## Getting Started
+Pindur is a personnal project where i aim to reproduce Tinder front and back end using flutter/php/mysql.
 
-This project is a starting point for a Flutter application.
+## Images of the current state of the project
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example1.png)
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example2.png)
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example3.png)
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example4.png)
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example5.png)
