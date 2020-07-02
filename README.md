@@ -2,7 +2,7 @@
 
 ## About
 
-Pindur is a personnal project where i aim to reproduce Tinder front and back end using flutter/php/mysql.
+``Pindur is a personnal project where i aim to reproduce Tinder front and back end using flutter/php/mysql.``
 
 ## Images of the current state of the project
 
