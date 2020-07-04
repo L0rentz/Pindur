@@ -59,3 +59,21 @@ Future deleteImage(String id, String email) async {
   );
   return response;
 }
+
+Future editProfile(String email, String about, String job, String company, String school, String city) async {
+  String url = 'http://192.168.31.37/pindur/editprofile.php';
+  final response = await http.post(
+    url,
+    headers: {"Accept": "Application/json"},
+    body: {
+      'email': email,
+      'about': about,
+      'job': job,
+      'company': company,
+      'school': school,
+      'city': city,
+    },
+  );
+  var convertedDatatoJson = jsonDecode(response.body);
+  return convertedDatatoJson;
+}

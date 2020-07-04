@@ -28,7 +28,7 @@ dependencies:
   image_picker: ^0.6.7+2
   image_cropper: ^1.2.3
   dotted_border: ^1.0.5
-
+  back_button_interceptor: ^4.2.4
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -29,7 +29,11 @@ class MyTextFormFieldState extends State<MyTextFormField> {
       },
       obscureText: widget.showpassword,
       controller: widget.controller,
+      maxLines: 1,
+      maxLength: 255,
+      maxLengthEnforced: true,
       decoration: InputDecoration(
+        counterText: '',
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
             color: Color.fromARGB(255, 100, 100, 100),

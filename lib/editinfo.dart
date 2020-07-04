@@ -1,10 +1,20 @@
 import 'package:pindur/api.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'gallery.dart';
+import 'api.dart';
 
 class EditInfo extends StatefulWidget {
   final Map argUser;
+  final aboutController = TextEditingController();
+  final jobController = TextEditingController();
+  final companyController = TextEditingController();
+  final cityController = TextEditingController();
+  final schoolController = TextEditingController();
+  final ScrollController scrollController =
+      ScrollController(initialScrollOffset: 0);
+  final _formKey = GlobalKey<FormState>();
   EditInfo({this.argUser});
   @override
   _EditInfoState createState() => _EditInfoState();
@@ -19,8 +29,31 @@ class _EditInfoState extends State<EditInfo> {
     Future.delayed(Duration.zero, () {
       setState(() {
         user = widget.argUser;
+        widget.aboutController.text = user['about'];
+        widget.jobController.text = user['job'];
+        widget.companyController.text = user['company'];
+        widget.schoolController.text = user['school'];
+        widget.cityController.text = user['city'];
+        BackButtonInterceptor.add(myInterceptor);
       });
     });
+  }
+
+  bool myInterceptor(bool stopDefaultButtonEvent) {
+    user['about'] = widget.aboutController.text;
+    user['job'] = widget.jobController.text;
+    user['company'] = widget.companyController.text;
+    user['school'] = widget.schoolController.text;
+    user['city'] = widget.cityController.text;
+    editProfile(
+        user['email'],
+        widget.aboutController.text,
+        widget.jobController.text,
+        widget.companyController.text,
+        widget.schoolController.text,
+        widget.cityController.text);
+    Navigator.pop(context, user);
+    return true;
   }
 
   @override
@@ -30,7 +63,19 @@ class _EditInfoState extends State<EditInfo> {
         leading: IconButton(
             highlightColor: Colors.white,
             splashColor: Colors.white,
-            onPressed: () {
+            onPressed: () async {
+              user['about'] = widget.aboutController.text;
+              user['job'] = widget.jobController.text;
+              user['company'] = widget.companyController.text;
+              user['school'] = widget.schoolController.text;
+              user['city'] = widget.cityController.text;
+              await editProfile(
+                  user['email'],
+                  widget.aboutController.text,
+                  widget.jobController.text,
+                  widget.companyController.text,
+                  widget.schoolController.text,
+                  widget.cityController.text);
               Navigator.pop(context, user);
             },
             icon: Transform.scale(
@@ -43,56 +88,121 @@ class _EditInfoState extends State<EditInfo> {
         title: Text('Edit Profile',
             style: TextStyle(color: Color.fromARGB(255, 75, 75, 75))),
       ),
-      body: Stack(children: [
-        GridView.count(
-            childAspectRatio: 0.67,
-            primary: false,
-            padding: const EdgeInsets.all(20),
-            crossAxisSpacing: 18,
-            mainAxisSpacing: 18,
-            crossAxisCount: 3,
-            children: <Widget>[
-              gridContainer('1'),
-              gridContainer('2'),
-              gridContainer('3'),
-              gridContainer('4'),
-              gridContainer('5'),
-              gridContainer('6'),
-              gridContainer('7'),
-              gridContainer('8'),
-              gridContainer('9'),
+      body: Form(
+        key: widget._formKey,
+        child: ListView(
+          controller: widget.scrollController,
+          physics: BouncingScrollPhysics(),
+          children: [
+            GridView.count(
+                childAspectRatio: 0.67,
+                primary: false,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                crossAxisSpacing: 18,
+                mainAxisSpacing: 18,
+                crossAxisCount: 3,
+                children: <Widget>[
+                  gridContainer('1'),
+                  gridContainer('2'),
+                  gridContainer('3'),
+                  gridContainer('4'),
+                  gridContainer('5'),
+                  gridContainer('6'),
+                  gridContainer('7'),
+                  gridContainer('8'),
+                  gridContainer('9'),
+                ]),
+            SizedBox(height: 10),
+            Column(children: [
+              addMedia(),
+              SizedBox(height: 20),
+              checkUserNull(),
+              SizedBox(height: 10),
+              editFormField('Add Job Title', widget.jobController, 'Job Title',
+                  null, 1, 255, ''),
+              SizedBox(height: 20),
+              editFormField('Add Company', widget.companyController, 'Company',
+                  null, 1, 255, ''),
+              SizedBox(height: 20),
+              editFormField('Add School', widget.schoolController, 'School',
+                  null, 1, 255, ''),
+              SizedBox(height: 20),
+              editFormField('Add City', widget.cityController, 'Livin In', null,
+                  1, 255, ''),
             ]),
-        Transform.translate(
-            offset: Offset(20, 558),
-            child: Container(
-              width: 355,
-              height: 48,
-              child: addMedia(),
-            )),
-      ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget checkUserNull() {
+    if (user != null)
+      return (editFormField('About You', widget.aboutController,
+          'About ${user['firstname']}', 2, null, 500, null));
+    else
+      return (editFormField(
+          'About You', widget.aboutController, '', 2, null, 500, null));
+  }
+
+  Widget editFormField(String hintText, final controller, String titleText,
+      int minLines, int maxLines, int maxLength, String counterText) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Transform.translate(
+            offset: Offset(10, 0),
+            child: Text(titleText,
+                textAlign: TextAlign.end, style: TextStyle(fontSize: 16)),
+          ),
+        ),
+        SizedBox(height: 5),
+        TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            maxLength: maxLength,
+            minLines: minLines,
+            decoration: InputDecoration(
+                hintText: hintText,
+                counterText: counterText,
+                hintStyle: TextStyle(color: Color.fromARGB(255, 190, 190, 190)),
+                filled: true,
+                disabledBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none)),
+      ],
     );
   }
 
   Widget addMedia() {
     if (user != null && user['photo9'] == null) {
-      return FlatButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          onPressed: () async {
-            await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Gallery(user: user),
-                )).then((result) {
-              if (result != null) {
-                setState(() {
-                  user = result;
-                });
-              }
-            });
-          },
-          child: Text('Add Media', style: TextStyle(color: Colors.white)),
-          color: Theme.of(context).textSelectionColor);
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: 50,
+        child: FlatButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            onPressed: () async {
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Gallery(user: user),
+                  )).then((result) {
+                if (result != null) {
+                  setState(() {
+                    user = result;
+                  });
+                }
+              });
+            },
+            child: Text('Add Media',
+                style: TextStyle(color: Colors.white, fontSize: 15)),
+            color: Theme.of(context).textSelectionColor),
+      );
     } else
       return (Container(width: 0, height: 0));
   }
@@ -217,5 +327,17 @@ class _EditInfoState extends State<EditInfo> {
       return Image.asset(address);
     else
       return Image.network(address);
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(myInterceptor);
+    widget.aboutController.dispose();
+    widget.cityController.dispose();
+    widget.companyController.dispose();
+    widget.schoolController.dispose();
+    widget.scrollController.dispose();
+    widget.jobController.dispose();
+    super.dispose();
   }
 }
