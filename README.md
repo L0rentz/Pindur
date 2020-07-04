@@ -19,3 +19,4 @@ Currently the following features are implemented on both the front and the back 
 ![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example3.jpg)  
 ![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example4.jpg)  
 ![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example5.jpg)  
+![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example6.jpg)
