@@ -12,7 +12,7 @@ Currently the following features are implemented on both the front and the back 
 - Able to add and delete up to 9 images per user.
 - Age updated on birthday
 
-## Images of the current state of the project
+## Current state of the project
 
 ![](https://raw.github.com/L0rentz/Pindur/master/examples/example1.gif)  
 ![](https://raw.github.com/L0rentz/Pindur/master/examples/example2.gif)  
