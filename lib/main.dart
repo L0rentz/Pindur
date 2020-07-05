@@ -5,6 +5,8 @@ import 'textformfield.dart';
 import 'api.dart';
 import 'homepage.dart';
 import 'greywhitegradient.dart';
+import 'loading.dart';
+import 'blurrydialog.dart';
 
 void main() {
   runApp(MyApp());
@@ -75,129 +77,153 @@ class LoginPageState extends State<LoginPage> {
   String firstname;
   String message = '';
   bool _showPassword = false;
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(children: [
-        GreyWhiteGradient(),
-        Transform.scale(
-          scale: 0.5,
-          child: Image.asset(
-            'assets/images/pindur.png',
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.55,
-          ),
-        ),
-        Center(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 400, 0, 0),
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Form(
-              key: _formKey,
-              child: Column(children: [
-                MyTextFormField(
-                  controller: emailController,
-                  errormsg: 'Email required',
-                  hintname: 'Email',
-                  showpassword: false,
+    return loading
+        ? Loading1()
+        : Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Stack(children: [
+              GreyWhiteGradient(),
+              Transform.scale(
+                scale: 0.5,
+                child: Image.asset(
+                  'assets/images/pindur.png',
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.55,
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                ),
-                Stack(
-                  children: [
-                    MyTextFormField(
-                      controller: passwordController,
-                      errormsg: 'Password required',
-                      hintname: 'Password',
-                      showpassword: !_showPassword,
-                    ),
-                    Transform.translate(
-                      offset:
-                          Offset(MediaQuery.of(context).size.width * 0.68, 0.0),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() => _showPassword = !_showPassword);
-                        },
-                        icon: Icon(Icons.remove_red_eye),
-                        color: getColor(_showPassword),
+              ),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(0, 400, 0, 0),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(children: [
+                      MyTextFormField(
+                        controller: emailController,
+                        errormsg: 'Email required',
+                        hintname: 'Email',
+                        showpassword: false,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 30),
-                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  FlatButton(
-                    onPressed: () async {
-                      setState(() {
-                        message = message = '';
-                      });
-                      if (_formKey.currentState.validate()) {
-                        var email = emailController.text;
-                        var password = passwordController.text;
-                        var rsp = await loginUser(email, password);
-                        if (rsp.containsKey('status')) {
-                          if (rsp['status'] == 1) {
-                            Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false, arguments: rsp['user_arr']);
-                          } else {
-                            setState(() {
-                              message = rsp['status_text'];
-                            });
-                          }
-                        }
-                      }
-                    },
-                    color: Theme.of(context).textSelectionColor,
-                    child: Text(
-                      'Log in',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       ),
-                    ),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.33),
-                  FlatButton(
-                    child: Column(
-                      children: [
-                        Text(
-                          'New user?',
-                          style: TextStyle(
-                            fontSize: 10.0,
-                            color: Theme.of(context).hintColor,
+                      Stack(
+                        children: [
+                          MyTextFormField(
+                            controller: passwordController,
+                            errormsg: 'Password required',
+                            hintname: 'Password',
+                            showpassword: !_showPassword,
                           ),
-                        ),
-                        Text(
-                          'Sign up',
-                          style: TextStyle(
-                            fontSize: 18.0,
+                          Transform.translate(
+                            offset: Offset(
+                                MediaQuery.of(context).size.width * 0.68, 0.0),
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() => _showPassword = !_showPassword);
+                              },
+                              icon: Icon(Icons.remove_red_eye),
+                              color: getColor(_showPassword),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return Welcome();
-                      }));
-                    },
+                        ],
+                      ),
+                      SizedBox(height: 30),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            FlatButton(
+                              onPressed: () async {
+                                setState(() {
+                                  message = message = '';
+                                });
+                                if (_formKey.currentState.validate()) {
+                                  setState(() => loading = true);
+                                  var email = emailController.text;
+                                  var password = passwordController.text;
+                                  var rsp = await loginUser(email, password);
+                                  if (rsp != null &&
+                                      rsp.containsKey('status')) {
+                                    if (rsp['status'] == 1) {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                          context, '/home', (r) => false,
+                                          arguments: rsp['user_arr']);
+                                    } else {
+                                      setState(() {
+                                        loading = false;
+                                        message = rsp['status_text'];
+                                      });
+                                    }
+                                  } else {
+                                    setState(() {
+                                      BlurryError alert = BlurryError('Error',
+                                          'There was an error loading your profile.\nPlease try again.');
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return alert;
+                                        },
+                                      );
+                                      loading = false;
+                                    });
+                                  }
+                                }
+                              },
+                              color: Theme.of(context).textSelectionColor,
+                              child: Text(
+                                'Log in',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.33),
+                            FlatButton(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'New user?',
+                                    style: TextStyle(
+                                      fontSize: 10.0,
+                                      color: Theme.of(context).hintColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Sign up',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return Welcome();
+                                }));
+                              },
+                            ),
+                          ]),
+                    ]),
                   ),
-                ]),
-              ]),
-            ),
-          ),
-        ),
-        Positioned(
-          left: MediaQuery.of(context).size.width * 0.40,
-          top: 552,
-          child: Text(
-            message,
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-      ]),
-    );
+                ),
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.40,
+                top: 552,
+                child: Text(
+                  message,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ]),
+          );
   }
 
   Color getColor(bool _showPassword) {

@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:convert';
 import 'api.dart';
+import 'blurrydialog.dart';
+import 'loading.dart';
 
 class Gallery extends StatefulWidget {
   final user;
@@ -20,6 +22,7 @@ class GalleryState extends State<Gallery> {
   File _imageFile;
   dynamic _pickImageError;
   String _retrieveDataError;
+  bool loading = false;
 
   final ImagePicker _picker = ImagePicker();
   final TextEditingController maxWidthController = TextEditingController();
@@ -91,96 +94,100 @@ class GalleryState extends State<Gallery> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          highlightColor: Colors.white,
-          splashColor: Colors.white,
-          onPressed: () {
-            Navigator.pop(context, widget.user);
-          },
-          icon: Transform.scale(
-              scale: 1.1,
-              child: Container(
-                  child: Icon(Icons.keyboard_return,
-                      color: Theme.of(context).textSelectionColor)))),
-        elevation: 1.0,
-        backgroundColor: Colors.white,
-        title: Text('Gallery',
-            style: TextStyle(color: Color.fromARGB(255, 75, 75, 75))),
-      flexibleSpace: validateImage(),
-      ),
-      body: Center(
-          child: defaultTargetPlatform == TargetPlatform.android
-              ? FutureBuilder<void>(
-                  future: retrieveLostData(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<void> snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
-                        return const Text(
-                          'You have not yet picked an image.',
-                          textAlign: TextAlign.center,
-                        );
-                      case ConnectionState.done:
-                        return _previewImage();
-                      default:
-                        if (snapshot.hasError) {
-                          return Text(
-                            'You have not yet picked an image.',
-                            textAlign: TextAlign.center,
-                          );
-                        } else {
-                          return const Text(
-                            'You have not yet picked an image.',
-                            textAlign: TextAlign.center,
-                          );
-                        }
-                    }
+    return loading
+        ? Loading1()
+        : Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                  highlightColor: Colors.white,
+                  splashColor: Colors.white,
+                  onPressed: () {
+                    Navigator.pop(context, widget.user);
                   },
-                )
-              : _previewImage()),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          if (_imageFile != null && cropped == false)
-            FloatingActionButton(
-              backgroundColor: Theme.of(context).textSelectionColor,
-              onPressed: () {
-                _cropImage();
-              },
-              heroTag: 'image2',
-              tooltip: 'Crop a photo',
-              child: const Icon(Icons.crop, color: Colors.white),
+                  icon: Transform.scale(
+                      scale: 1.1,
+                      child: Container(
+                          child: Icon(Icons.keyboard_return,
+                              color: Theme.of(context).textSelectionColor)))),
+              elevation: 1.0,
+              backgroundColor: Colors.white,
+              title: Text('Gallery',
+                  style: TextStyle(color: Color.fromARGB(255, 75, 75, 75))),
+              flexibleSpace: validateImage(),
             ),
-          Padding(
-           padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              backgroundColor: Color.fromARGB(255, 175, 175, 175),
-              onPressed: () {
-                _onImageButtonPressed(ImageSource.gallery, context: context);
-              },
-              heroTag: 'image0',
-              tooltip: 'Pick Image from gallery',
-              child: const Icon(Icons.photo_library, color: Colors.white),
+            body: Center(
+                child: defaultTargetPlatform == TargetPlatform.android
+                    ? FutureBuilder<void>(
+                        future: retrieveLostData(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<void> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                            case ConnectionState.waiting:
+                              return const Text(
+                                'You have not yet picked an image.',
+                                textAlign: TextAlign.center,
+                              );
+                            case ConnectionState.done:
+                              return _previewImage();
+                            default:
+                              if (snapshot.hasError) {
+                                return Text(
+                                  'You have not yet picked an image.',
+                                  textAlign: TextAlign.center,
+                                );
+                              } else {
+                                return const Text(
+                                  'You have not yet picked an image.',
+                                  textAlign: TextAlign.center,
+                                );
+                              }
+                          }
+                        },
+                      )
+                    : _previewImage()),
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                if (_imageFile != null && cropped == false)
+                  FloatingActionButton(
+                    backgroundColor: Theme.of(context).textSelectionColor,
+                    onPressed: () {
+                      _cropImage();
+                    },
+                    heroTag: 'image2',
+                    tooltip: 'Crop a photo',
+                    child: const Icon(Icons.crop, color: Colors.white),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: FloatingActionButton(
+                    backgroundColor: Color.fromARGB(255, 175, 175, 175),
+                    onPressed: () {
+                      _onImageButtonPressed(ImageSource.gallery,
+                          context: context);
+                    },
+                    heroTag: 'image0',
+                    tooltip: 'Pick Image from gallery',
+                    child: const Icon(Icons.photo_library, color: Colors.white),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: FloatingActionButton(
+                    backgroundColor: Color.fromARGB(255, 175, 175, 175),
+                    onPressed: () {
+                      _onImageButtonPressed(ImageSource.camera,
+                          context: context);
+                    },
+                    heroTag: 'image1',
+                    tooltip: 'Take a Photo',
+                    child: const Icon(Icons.camera_alt, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton(
-              backgroundColor: Color.fromARGB(255, 175, 175, 175),
-              onPressed: () {
-                _onImageButtonPressed(ImageSource.camera, context: context);
-              },
-              heroTag: 'image1',
-              tooltip: 'Take a Photo',
-              child: const Icon(Icons.camera_alt, color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Future<Null> _cropImage() async {
@@ -208,11 +215,9 @@ class GalleryState extends State<Gallery> {
   String countPhotoId(final user) {
     var i = 1;
     for (; i < 10; i++) {
-      if (i == 9)
-        break;
+      if (i == 9) break;
       String id = i.toString();
-      if (user['photo$id'] == null)
-        break;
+      if (user['photo$id'] == null) break;
     }
     String nb = i.toString();
     return (nb);
@@ -223,18 +228,34 @@ class GalleryState extends State<Gallery> {
       return (Transform.translate(
         offset: Offset(160, 38),
         child: IconButton(
-          highlightColor: Colors.white,
-          splashColor: Colors.white,
-          onPressed: () async {
-            base64Image = base64.encode(_imageFile.readAsBytesSync());
-            var newuser = await uploadImage(_imageFile.path.split('/').last, base64Image, countPhotoId(widget.user), widget.user['email']);
-              Navigator.pop(context, newuser['user_arr']);
-          },
-          icon: Transform.scale(
-              scale: 1.5,
-              child: Container(
-                  child: Icon(Icons.check,
-                      color: Theme.of(context).textSelectionColor)))),
+            highlightColor: Colors.white,
+            splashColor: Colors.white,
+            onPressed: () async {
+              loading = true;
+              base64Image = base64.encode(_imageFile.readAsBytesSync());
+              var newuser = await uploadImage(_imageFile.path.split('/').last,
+                  base64Image, countPhotoId(widget.user), widget.user['email']);
+              if (newuser == null) {
+                loading = false;
+                setState(() {
+                  BlurryError alert = BlurryError('Error',
+                      'There was an error uploading your picture.\nPlease try again.');
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alert;
+                    },
+                  );
+                });
+              } else {
+                Navigator.pop(context, newuser['user_arr']);
+              }
+            },
+            icon: Transform.scale(
+                scale: 1.5,
+                child: Container(
+                    child: Icon(Icons.check,
+                        color: Theme.of(context).textSelectionColor)))),
       ));
     } else
       return Container(width: 0, height: 0);

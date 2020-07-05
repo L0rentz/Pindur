@@ -30,6 +30,8 @@ class _SignUpState extends State<SignUp> {
   String errormsg = '';
   bool picked = false;
   bool _showPassword = false;
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,7 +249,8 @@ class _SignUpState extends State<SignUp> {
                           widget.passwordController.text) &&
                       widget.passwordController.text.length > 5 &&
                       validemail == true &&
-                      agreed == false && dropdownvalue != '---------------') {
+                      agreed == false &&
+                      dropdownvalue != '---------------') {
                     showBlurryDialog(context);
                   } else if (widget.repeatController.text !=
                       widget.passwordController.text) {
@@ -331,11 +334,15 @@ class _SignUpState extends State<SignUp> {
     var rsp;
     VoidCallback continueCallBack = () async => {
           rsp = await createUser(email, password, firstname, birthdate, gender),
-          if (rsp.containsKey('status'))
+          if (rsp != null && rsp.containsKey('status'))
             {
-              if (rsp['status'] == 1) {
-                  Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false, arguments: rsp['user_arr']),
-              } else if (rsp['status'] == 3 ||
+              if (rsp['status'] == 1)
+                {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/home', (r) => false,
+                      arguments: rsp['user_arr']),
+                }
+              else if (rsp['status'] == 3 ||
                   rsp['status'] == 2 ||
                   rsp['status'] == 0)
                 {
@@ -344,6 +351,19 @@ class _SignUpState extends State<SignUp> {
                   }),
                   Navigator.of(context).pop(),
                 },
+            }
+          else
+            {
+              Navigator.of(context).pop(),
+              setState(() {
+                BlurryError alert = BlurryError('Error',
+                    'There was an error creating your profile.\nPlease try again.');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return alert;
+                    });
+              }),
             },
         };
 

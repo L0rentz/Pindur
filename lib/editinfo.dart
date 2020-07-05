@@ -1,9 +1,10 @@
 import 'package:pindur/api.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'gallery.dart';
 import 'api.dart';
+import 'loading.dart';
+import 'blurrydialog.dart';
 
 class EditInfo extends StatefulWidget {
   final Map argUser;
@@ -22,6 +23,7 @@ class EditInfo extends StatefulWidget {
 
 class _EditInfoState extends State<EditInfo> {
   Map user;
+  bool loading = false;
 
   @override
   void initState() {
@@ -34,106 +36,84 @@ class _EditInfoState extends State<EditInfo> {
         widget.companyController.text = user['company'];
         widget.schoolController.text = user['school'];
         widget.cityController.text = user['city'];
-        BackButtonInterceptor.add(myInterceptor);
       });
     });
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent) {
-    user['about'] = widget.aboutController.text;
-    user['job'] = widget.jobController.text;
-    user['company'] = widget.companyController.text;
-    user['school'] = widget.schoolController.text;
-    user['city'] = widget.cityController.text;
-    editProfile(
-        user['email'],
-        widget.aboutController.text,
-        widget.jobController.text,
-        widget.companyController.text,
-        widget.schoolController.text,
-        widget.cityController.text);
-    Navigator.pop(context, user);
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            highlightColor: Colors.white,
-            splashColor: Colors.white,
-            onPressed: () async {
-              user['about'] = widget.aboutController.text;
-              user['job'] = widget.jobController.text;
-              user['company'] = widget.companyController.text;
-              user['school'] = widget.schoolController.text;
-              user['city'] = widget.cityController.text;
-              await editProfile(
-                  user['email'],
-                  widget.aboutController.text,
-                  widget.jobController.text,
-                  widget.companyController.text,
-                  widget.schoolController.text,
-                  widget.cityController.text);
-              Navigator.pop(context, user);
-            },
-            icon: Transform.scale(
-                scale: 1.1,
-                child: Container(
-                    child: Icon(Icons.keyboard_return,
-                        color: Theme.of(context).textSelectionColor)))),
-        elevation: 1.0,
-        backgroundColor: Colors.white,
-        title: Text('Edit Profile',
-            style: TextStyle(color: Color.fromARGB(255, 75, 75, 75))),
-      ),
-      body: Form(
-        key: widget._formKey,
-        child: ListView(
-          controller: widget.scrollController,
-          physics: BouncingScrollPhysics(),
-          children: [
-            GridView.count(
-                childAspectRatio: 0.67,
-                primary: false,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 18,
-                mainAxisSpacing: 18,
-                crossAxisCount: 3,
-                children: <Widget>[
-                  gridContainer('1'),
-                  gridContainer('2'),
-                  gridContainer('3'),
-                  gridContainer('4'),
-                  gridContainer('5'),
-                  gridContainer('6'),
-                  gridContainer('7'),
-                  gridContainer('8'),
-                  gridContainer('9'),
-                ]),
-            SizedBox(height: 10),
-            Column(children: [
-              addMedia(),
-              SizedBox(height: 20),
-              checkUserNull(),
-              SizedBox(height: 10),
-              editFormField('Add Job Title', widget.jobController, 'Job Title',
-                  null, 1, 255, ''),
-              SizedBox(height: 20),
-              editFormField('Add Company', widget.companyController, 'Company',
-                  null, 1, 255, ''),
-              SizedBox(height: 20),
-              editFormField('Add School', widget.schoolController, 'School',
-                  null, 1, 255, ''),
-              SizedBox(height: 20),
-              editFormField('Add City', widget.cityController, 'Livin In', null,
-                  1, 255, ''),
-            ]),
-          ],
-        ),
-      ),
+    return WillPopScope(
+      onWillPop: () async {
+        await saveEdit();
+        return false;
+      },
+      child: loading
+          ? Loading1()
+          : Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                    highlightColor: Colors.white,
+                    splashColor: Colors.white,
+                    onPressed: () async {
+                      await saveEdit();
+                    },
+                    icon: Transform.scale(
+                        scale: 1.1,
+                        child: Container(
+                            child: Icon(Icons.keyboard_return,
+                                color: Theme.of(context).textSelectionColor)))),
+                elevation: 1.0,
+                backgroundColor: Colors.white,
+                title: Text('Edit Profile',
+                    style: TextStyle(color: Color.fromARGB(255, 75, 75, 75))),
+              ),
+              body: Form(
+                key: widget._formKey,
+                child: ListView(
+                  controller: widget.scrollController,
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    GridView.count(
+                        childAspectRatio: 0.67,
+                        primary: false,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(20),
+                        crossAxisSpacing: 18,
+                        mainAxisSpacing: 18,
+                        crossAxisCount: 3,
+                        children: <Widget>[
+                          gridContainer('1'),
+                          gridContainer('2'),
+                          gridContainer('3'),
+                          gridContainer('4'),
+                          gridContainer('5'),
+                          gridContainer('6'),
+                          gridContainer('7'),
+                          gridContainer('8'),
+                          gridContainer('9'),
+                        ]),
+                    SizedBox(height: 10),
+                    Column(children: [
+                      addMedia(),
+                      SizedBox(height: 20),
+                      checkUserNull(),
+                      SizedBox(height: 10),
+                      editFormField('Add Job Title', widget.jobController,
+                          'Job Title', null, 1, 255, ''),
+                      SizedBox(height: 20),
+                      editFormField('Add Company', widget.companyController,
+                          'Company', null, 1, 255, ''),
+                      SizedBox(height: 20),
+                      editFormField('Add School', widget.schoolController,
+                          'School', null, 1, 255, ''),
+                      SizedBox(height: 20),
+                      editFormField('Add City', widget.cityController,
+                          'Livin In', null, 1, 255, ''),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -207,6 +187,42 @@ class _EditInfoState extends State<EditInfo> {
       return (Container(width: 0, height: 0));
   }
 
+  Future saveEdit() async {
+    setState(() => loading = true);
+    var rsp = await editProfile(
+        user['email'],
+        widget.aboutController.text,
+        widget.jobController.text,
+        widget.companyController.text,
+        widget.schoolController.text,
+        widget.cityController.text);
+    if (rsp != null && rsp.containsKey('status')) {
+      if (rsp['status'] == 1) {
+        setState(() {
+          user = rsp['user_arr'];
+          Navigator.pop(context, user);
+        });
+      }
+    } else {
+      setState(() {
+        user['about'] = widget.aboutController.text;
+        user['job'] = widget.jobController.text;
+        user['company'] = widget.companyController.text;
+        user['school'] = widget.schoolController.text;
+        user['city'] = widget.cityController.text;
+        BlurryError alert = BlurryError('Error',
+            'There was an error updating your profile.\nPlease try again.');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          },
+        );
+        loading = false;
+      });
+    }
+  }
+
   String imageAddress(String id) {
     if (user != null && user['photo$id'] != null) {
       String photo = user['photo$id'];
@@ -240,11 +256,23 @@ class _EditInfoState extends State<EditInfo> {
                 }
               });
             } else {
-              await deleteImage(id, user['email']);
-              setState(() {
-                user['photo$id'] = null;
-                fillEmptyImageSlot(id);
-              });
+              var rsp = await deleteImage(id, user['email']);
+              if (rsp != null) {
+                setState(() {
+                  user['photo$id'] = null;
+                  fillEmptyImageSlot(id);
+                });
+              } else {
+                setState(() {
+                  BlurryError alert = BlurryError('Error',
+                      'There was an error deleting your picture.\nPlease try again.');
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert;
+                      });
+                });
+              }
             }
           },
           child: Container(
@@ -331,7 +359,6 @@ class _EditInfoState extends State<EditInfo> {
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
     widget.aboutController.dispose();
     widget.cityController.dispose();
     widget.companyController.dispose();
