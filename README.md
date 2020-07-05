@@ -9,7 +9,7 @@
 Currently the following features are implemented on both the front and the back end.
 - Inscription
 - Connection
-- Able to add and delete up to 9 images per user.
+- Able to add and delete up to 9 images per user and informations about yourself
 - Age updated on birthday
 
 ## Current state of the project
