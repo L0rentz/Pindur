@@ -14,9 +14,6 @@ Currently the following features are implemented on both the front and the back 
 
 ## Images of the current state of the project
 
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example1.jpg)  
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example2.jpg)  
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example3.jpg)  
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example4.jpg)  
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example5.jpg)  
-![ScreenShot](https://raw.github.com/L0rentz/Pindur/master/examples/example6.jpg)
+![](https://raw.github.com/L0rentz/Pindur/master/examples/example1.gif)  
+![](https://raw.github.com/L0rentz/Pindur/master/examples/example2.gif)  
+![](https://raw.github.com/L0rentz/Pindur/master/examples/example3.gif)  
