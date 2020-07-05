@@ -15,5 +15,7 @@ Currently the following features are implemented on both the front and the back 
 ## Current state of the project
 
 ![](https://raw.github.com/L0rentz/Pindur/master/examples/example1.gif)  
+  
 ![](https://raw.github.com/L0rentz/Pindur/master/examples/example2.gif)  
+  
 ![](https://raw.github.com/L0rentz/Pindur/master/examples/example3.gif)  
