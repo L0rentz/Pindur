@@ -16,4 +16,3 @@ Currently the following features are implemented on both the front and the back 
 
 ![gif](https://raw.github.com/L0rentz/Pindur/master/examples/example1.gif)  
 ![gif](https://raw.github.com/L0rentz/Pindur/master/examples/example2.gif)  
-![gif](https://raw.github.com/L0rentz/Pindur/master/examples/example3.gif)  
