@@ -14,6 +14,9 @@ class SignUp extends StatefulWidget {
   final birthdateController = TextEditingController();
   final f1 = DateFormat('MMM dd, yyyy');
   final f2 = DateFormat('y-MM-dd');
+  final f5 = DateFormat('y');
+  final f4 = DateFormat('MM');
+  final f6 = DateFormat('dd');
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -202,13 +205,30 @@ class _SignUpState extends State<SignUp> {
                   bool validemail = RegExp(
                           r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
                       .hasMatch(widget.emailController.text);
+                  var age = 0;
+                  var monthoffset = 0;
+                  var dayoffset = 0;
+                  if (picked == true) {
+                    age =
+                        int.parse(widget.f5.format(DateTime.now()).toString()) -
+                            int.parse(widget.f5.format(selectedDate));
+                    monthoffset =
+                        int.parse(widget.f4.format(DateTime.now()).toString()) -
+                            int.parse(widget.f4.format(selectedDate));
+                    dayoffset = int.parse(widget.f6.format(selectedDate)) -
+                        int.parse(widget.f6.format(DateTime.now()).toString());
+                  }
+                  if ((monthoffset < 0) || (monthoffset == 0 && dayoffset > 0))
+                    age--;
+                  print(age);
                   if (widget._formKey.currentState.validate() &&
                       (widget.repeatController.text ==
                           widget.passwordController.text) &&
                       widget.passwordController.text.length > 5 &&
                       validemail == true &&
                       agreed == false &&
-                      dropdownvalue != '---------------') {
+                      dropdownvalue != '---------------' &&
+                      age >= 18) {
                     showBlurryDialog(context);
                   } else if (widget.repeatController.text !=
                       widget.passwordController.text) {
@@ -228,6 +248,10 @@ class _SignUpState extends State<SignUp> {
                     setState(() {
                       dropdowncolor = Color.fromARGB(255, 175, 0, 0);
                       errormsg = 'Please fill the dropdown menu';
+                    });
+                  } else if (age < 18) {
+                    setState(() {
+                      errormsg = 'You must be over the age of 18';
                     });
                   }
                 },
@@ -249,48 +273,46 @@ class _SignUpState extends State<SignUp> {
 
   Widget genreSelector() {
     return Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: DropdownButton(
-                        underline: Container(
-                            color: Color.fromARGB(255, 125, 125, 125),
-                            height: 1),
-                        value: dropdownvalue,
-                        icon: Transform.translate(
-                            offset: Offset(85, 0),
-                            child: Icon(Icons.arrow_drop_down,
-                                color: dropdowncolor)),
-                        items: <String>[
-                          '---------------',
-                          'Woman',
-                          'Man',
-                          'Agender',
-                          'Androgyne',
-                          'Androgynous',
-                          'Bigender',
-                          'Female to Male',
-                          'Male to Female',
-                          'Gender Fluid',
-                          'Gender Nonconforming',
-                          'Gender Questioning',
-                          'Gender Variant',
-                          'Nonbinary',
-                          'Neutrois',
-                          'Pangender',
-                          'Transgender',
-                          'Transfeminine',
-                          'Other'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownvalue = newValue;
-                          });
-                        }),
-                  );
+      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+      child: DropdownButton(
+          underline:
+              Container(color: Color.fromARGB(255, 125, 125, 125), height: 1),
+          value: dropdownvalue,
+          icon: Transform.translate(
+              offset: Offset(85, 0),
+              child: Icon(Icons.arrow_drop_down, color: dropdowncolor)),
+          items: <String>[
+            '---------------',
+            'Woman',
+            'Man',
+            'Agender',
+            'Androgyne',
+            'Androgynous',
+            'Bigender',
+            'Female to Male',
+            'Male to Female',
+            'Gender Fluid',
+            'Gender Nonconforming',
+            'Gender Questioning',
+            'Gender Variant',
+            'Nonbinary',
+            'Neutrois',
+            'Pangender',
+            'Transgender',
+            'Transfeminine',
+            'Other'
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String newValue) {
+            setState(() {
+              dropdownvalue = newValue;
+            });
+          }),
+    );
   }
 
   Future<DateTime> selectDate(BuildContext context) async {

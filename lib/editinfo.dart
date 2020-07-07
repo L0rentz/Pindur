@@ -39,8 +39,7 @@ class _EditInfoState extends State<EditInfo> {
         if (user['showage'] == '1') {
           isSwitched = true;
           showage = 1;
-        }
-        else {
+        } else {
           isSwitched = false;
           showage = 0;
         }
@@ -160,8 +159,9 @@ class _EditInfoState extends State<EditInfo> {
                                     focusedBorder: InputBorder.none,
                                     focusedErrorBorder: InputBorder.none)),
                             Transform.translate(
-                              offset: Offset(MediaQuery.of(context).size.width * 0.83, 0),
-                               child: Switch(
+                              offset: Offset(
+                                  MediaQuery.of(context).size.width * 0.83, 0),
+                              child: Switch(
                                 value: isSwitched,
                                 onChanged: (value) {
                                   setState(() {
@@ -172,7 +172,8 @@ class _EditInfoState extends State<EditInfo> {
                                       showage = 0;
                                   });
                                 },
-                                activeTrackColor: Color.fromARGB(255, 120, 200, 120),
+                                activeTrackColor:
+                                    Color.fromARGB(255, 120, 200, 120),
                                 activeColor: Theme.of(context).hintColor,
                               ),
                             ),
@@ -315,7 +316,8 @@ class _EditInfoState extends State<EditInfo> {
         widget.companyController.text,
         widget.schoolController.text,
         widget.cityController.text,
-        dropdownvalue, showage);
+        dropdownvalue,
+        showage);
     if (rsp != null && rsp.containsKey('status')) {
       if (rsp['status'] == 1) {
         setState(() {
