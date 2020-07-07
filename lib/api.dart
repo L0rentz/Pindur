@@ -76,7 +76,7 @@ Future deleteImage(String id, String email) async {
 }
 
 Future editProfile(String email, String about, String job, String company,
-    String school, String city) async {
+    String school, String city, String gender, int showage) async {
   String url = 'http://192.168.31.37/pindur/editprofile.php';
   try {
     final response = await http.post(
@@ -89,6 +89,8 @@ Future editProfile(String email, String about, String job, String company,
         'company': company,
         'school': school,
         'city': city,
+        'gender': gender,
+        'showage': showage.toString()
       },
     );
     var convertedDatatoJson = jsonDecode(response.body);

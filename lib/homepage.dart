@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       dayoffset = int.parse(user['birthdate'].substring(8, 10)) -
           int.parse(widget.f3.format(DateTime.now()).toString());
     }
-    if (monthoffset <= 0 && dayoffset < 0) age--;
+    if ((monthoffset < 0) || ( monthoffset == 0 && dayoffset > 0)) age--;
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Transform.translate(

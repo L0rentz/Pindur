@@ -13,6 +13,7 @@ class EditInfo extends StatefulWidget {
   final companyController = TextEditingController();
   final cityController = TextEditingController();
   final schoolController = TextEditingController();
+  final instagramController = TextEditingController();
   final ScrollController scrollController =
       ScrollController(initialScrollOffset: 0);
   final _formKey = GlobalKey<FormState>();
@@ -24,6 +25,9 @@ class EditInfo extends StatefulWidget {
 class _EditInfoState extends State<EditInfo> {
   Map user;
   bool loading = false;
+  String dropdownvalue;
+  bool isSwitched = false;
+  int showage;
 
   @override
   void initState() {
@@ -31,6 +35,15 @@ class _EditInfoState extends State<EditInfo> {
     Future.delayed(Duration.zero, () {
       setState(() {
         user = widget.argUser;
+        dropdownvalue = user['gender'];
+        if (user['showage'] == '1') {
+          isSwitched = true;
+          showage = 1;
+        }
+        else {
+          isSwitched = false;
+          showage = 0;
+        }
         widget.aboutController.text = user['about'];
         widget.jobController.text = user['job'];
         widget.companyController.text = user['company'];
@@ -109,6 +122,63 @@ class _EditInfoState extends State<EditInfo> {
                       SizedBox(height: 20),
                       editFormField('Add City', widget.cityController,
                           'Livin In', null, 1, 255, ''),
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('I\'m a',
+                                textAlign: TextAlign.end,
+                                style: TextStyle(fontSize: 16))),
+                      ),
+                      SizedBox(height: 5),
+                      genreField(),
+                      SizedBox(height: 20),
+                      Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Transform.translate(
+                              offset: Offset(10, 0),
+                              child: Text('Control Your Profile',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(fontSize: 16)),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Stack(children: [
+                            TextField(
+                                decoration: InputDecoration(
+                                    hintText: 'Don\'t Show My Age',
+                                    hintStyle: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 150, 190, 150)),
+                                    filled: true,
+                                    disabledBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    focusedErrorBorder: InputBorder.none)),
+                            Transform.translate(
+                              offset: Offset(MediaQuery.of(context).size.width * 0.83, 0),
+                               child: Switch(
+                                value: isSwitched,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isSwitched = value;
+                                    if (isSwitched == true)
+                                      showage = 1;
+                                    else
+                                      showage = 0;
+                                  });
+                                },
+                                activeTrackColor: Color.fromARGB(255, 120, 200, 120),
+                                activeColor: Theme.of(context).hintColor,
+                              ),
+                            ),
+                          ]),
+                        ],
+                      ),
                     ]),
                   ],
                 ),
@@ -124,6 +194,55 @@ class _EditInfoState extends State<EditInfo> {
     else
       return (editFormField(
           'About You', widget.aboutController, '', 2, null, 500, null));
+  }
+
+  Widget genreField() {
+    return Container(
+      color: Color.fromARGB(255, 245, 245, 245),
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.fromLTRB(10, 0, 50, 5),
+      child: DropdownButton(
+          underline:
+              Container(color: Color.fromARGB(255, 125, 125, 125), height: 1),
+          value: dropdownvalue,
+          icon: Transform.translate(
+              offset: Offset(MediaQuery.of(context).size.width * 0.45, 0),
+              child: Transform.scale(
+                scale: 1.3,
+                child: Icon(Icons.arrow_drop_down,
+                    color: Color.fromARGB(255, 150, 150, 150)),
+              )),
+          items: <String>[
+            'Woman',
+            'Man',
+            'Agender',
+            'Androgyne',
+            'Androgynous',
+            'Bigender',
+            'Female to Male',
+            'Male to Female',
+            'Gender Fluid',
+            'Gender Nonconforming',
+            'Gender Questioning',
+            'Gender Variant',
+            'Nonbinary',
+            'Neutrois',
+            'Pangender',
+            'Transgender',
+            'Transfeminine',
+            'Other'
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String newValue) {
+            setState(() {
+              dropdownvalue = newValue;
+            });
+          }),
+    );
   }
 
   Widget editFormField(String hintText, final controller, String titleText,
@@ -195,7 +314,8 @@ class _EditInfoState extends State<EditInfo> {
         widget.jobController.text,
         widget.companyController.text,
         widget.schoolController.text,
-        widget.cityController.text);
+        widget.cityController.text,
+        dropdownvalue, showage);
     if (rsp != null && rsp.containsKey('status')) {
       if (rsp['status'] == 1) {
         setState(() {

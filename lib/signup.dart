@@ -122,49 +122,7 @@ class _SignUpState extends State<SignUp> {
                     ],
                   ),
                   SizedBox(height: 20.0),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: DropdownButton(
-                        underline: Container(
-                            color: Color.fromARGB(255, 125, 125, 125),
-                            height: 1),
-                        value: dropdownvalue,
-                        icon: Transform.translate(
-                            offset: Offset(85, 0),
-                            child: Icon(Icons.arrow_drop_down,
-                                color: dropdowncolor)),
-                        items: <String>[
-                          '---------------',
-                          'Woman',
-                          'Man',
-                          'Agender',
-                          'Androgyne',
-                          'Androgynous',
-                          'Bigender',
-                          'Female to Male',
-                          'Male to Female',
-                          'Gender Fluid',
-                          'Gender Nonconforming',
-                          'Gender Questioning',
-                          'Gender Variant',
-                          'Nonbinary',
-                          'Neutrois',
-                          'Pangender',
-                          'Transgender',
-                          'Transfeminine',
-                          'Other'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownvalue = newValue;
-                          });
-                        }),
-                  ),
+                  genreSelector(),
                   SizedBox(height: 10.0),
                   Container(
                       padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0),
@@ -287,6 +245,52 @@ class _SignUpState extends State<SignUp> {
         ),
       ]),
     );
+  }
+
+  Widget genreSelector() {
+    return Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: DropdownButton(
+                        underline: Container(
+                            color: Color.fromARGB(255, 125, 125, 125),
+                            height: 1),
+                        value: dropdownvalue,
+                        icon: Transform.translate(
+                            offset: Offset(85, 0),
+                            child: Icon(Icons.arrow_drop_down,
+                                color: dropdowncolor)),
+                        items: <String>[
+                          '---------------',
+                          'Woman',
+                          'Man',
+                          'Agender',
+                          'Androgyne',
+                          'Androgynous',
+                          'Bigender',
+                          'Female to Male',
+                          'Male to Female',
+                          'Gender Fluid',
+                          'Gender Nonconforming',
+                          'Gender Questioning',
+                          'Gender Variant',
+                          'Nonbinary',
+                          'Neutrois',
+                          'Pangender',
+                          'Transgender',
+                          'Transfeminine',
+                          'Other'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownvalue = newValue;
+                          });
+                        }),
+                  );
   }
 
   Future<DateTime> selectDate(BuildContext context) async {
