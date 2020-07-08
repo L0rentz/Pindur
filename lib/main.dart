@@ -7,6 +7,7 @@ import 'homepage.dart';
 import 'greywhitegradient.dart';
 import 'loading.dart';
 import 'blurrydialog.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,6 +16,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.black);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

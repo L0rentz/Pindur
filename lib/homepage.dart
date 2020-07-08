@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'gallery.dart';
 import 'editinfo.dart';
+import 'usercard.dart';
 
 class HomePage extends StatefulWidget {
   final f2 = DateFormat('y');
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       dayoffset = int.parse(user['birthdate'].substring(8, 10)) -
           int.parse(widget.f3.format(DateTime.now()).toString());
     }
-    if ((monthoffset < 0) || ( monthoffset == 0 && dayoffset > 0)) age--;
+    if ((monthoffset < 0) || (monthoffset == 0 && dayoffset > 0)) age--;
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Transform.translate(
@@ -76,97 +77,69 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
       ),
       body: Stack(children: [
-        Column(
-          children: [
-            Center(
-                heightFactor: 1.1,
-                child: Transform.scale(
-                    scale: 0.5,
-                    child: CircleAvatar(
-                      radius: 120,
-                      backgroundImage: avatarImage(user),
-                      child: avatarText(user),
-                    ))),
-            Transform.translate(
-                offset: Offset(0, -60),
-                child: Center(child: nameAge(age, user))),
-            Transform.translate(
-              offset: Offset(-125, -20),
-              child: Column(
-                children: [
-                  Transform.scale(
-                    scale: 1.5,
-                    child: RawMaterialButton(
-                      onPressed: () {},
-                      fillColor: Color.fromARGB(255, 242, 242, 242),
-                      elevation: 2.0,
-                      child: Icon(Icons.settings,
-                          size: 20, color: Color.fromARGB(255, 200, 200, 200)),
-                      shape: CircleBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text('SETTINGS',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 180, 180, 180))),
-                ],
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(125, -90),
-              child: Column(
-                children: [
-                  Transform.scale(
-                    scale: 1.5,
-                    child: RawMaterialButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditInfo(argUser: user),
-                            )).then((result) {
-                          if (result != null) {
-                            setState(() {
-                              user = result;
-                            });
-                          }
-                        });
-                      },
-                      fillColor: Color.fromARGB(255, 242, 242, 242),
-                      elevation: 2.0,
-                      child: Icon(Icons.edit,
-                          size: 20, color: Color.fromARGB(255, 200, 200, 200)),
-                      shape: CircleBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text('EDIT INFOS',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 180, 180, 180))),
-                ],
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(0, -155),
-              child: Column(
-                children: [
-                  Transform.scale(
-                    scale: 1.5,
-                    child: RawMaterialButton(
-                      onPressed: () async {
-                        if (user != null && user['photo9'] == null) {
+        Transform.translate(
+          offset: Offset(0, -15),
+          child: Column(
+            children: [
+              Center(
+                  heightFactor: 1.1,
+                  child: Transform.scale(
+                      scale: 0.5,
+                      child: GestureDetector(
+                        onTap: () async {
                           await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Gallery(user: user),
-                              )).then((result) {
+                                  builder: (context) =>
+                                      UserCard(user: user))).then((result) {
                             if (result != null) {
                               setState(() {
                                 user = result;
                               });
                             }
                           });
-                        } else {
+                        },
+                        child: CircleAvatar(
+                          radius: 120,
+                          backgroundImage: avatarImage(user),
+                          child: avatarText(user),
+                        ),
+                      ))),
+              Transform.translate(
+                  offset: Offset(0, -60), child: nameAge(age, user)),
+              companyJob(user),
+              school(user),
+              Transform.translate(
+                offset: Offset(-125, -20),
+                child: Column(
+                  children: [
+                    Transform.scale(
+                      scale: 1.5,
+                      child: RawMaterialButton(
+                        onPressed: () {},
+                        fillColor: Color.fromARGB(255, 242, 242, 242),
+                        elevation: 2.0,
+                        child: Icon(Icons.settings,
+                            size: 20,
+                            color: Color.fromARGB(255, 200, 200, 200)),
+                        shape: CircleBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text('SETTINGS',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 180, 180, 180))),
+                  ],
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(125, -90),
+                child: Column(
+                  children: [
+                    Transform.scale(
+                      scale: 1.5,
+                      child: RawMaterialButton(
+                        onPressed: () async {
                           await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -178,53 +151,158 @@ class _HomePageState extends State<HomePage> {
                               });
                             }
                           });
-                        }
-                      },
-                      fillColor: Theme.of(context).textSelectionColor,
-                      elevation: 2.0,
-                      child: Icon(Icons.photo_camera,
-                          size: 20, color: Colors.white),
-                      shape: CircleBorder(),
+                        },
+                        fillColor: Color.fromARGB(255, 242, 242, 242),
+                        elevation: 2.0,
+                        child: Icon(Icons.edit,
+                            size: 20,
+                            color: Color.fromARGB(255, 200, 200, 200)),
+                        shape: CircleBorder(),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text('ADD MEDIA',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 180, 180, 180))),
-                  Transform.translate(
-                      offset: Offset(20, -42),
-                      child: Transform.scale(
-                          scale: 0.8,
-                          child: Container(
-                              child: Transform.scale(
-                                  scale: 0.9,
-                                  child: Icon(Icons.add,
-                                      color: Theme.of(context).hintColor)),
-                              decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      spreadRadius: 5,
-                                      blurRadius: 10,
-                                      color: Color.fromARGB(125, 100, 100, 100),
-                                    )
-                                  ],
-                                  shape: BoxShape.circle,
-                                  color: Colors.white)))),
-                ],
+                    SizedBox(height: 8),
+                    Text('EDIT INFOS',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 180, 180, 180))),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Transform.translate(
+                offset: Offset(0, -155),
+                child: Column(
+                  children: [
+                    Transform.scale(
+                      scale: 1.5,
+                      child: RawMaterialButton(
+                        onPressed: () async {
+                          if (user != null && user['photo9'] == null) {
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Gallery(user: user),
+                                )).then((result) {
+                              if (result != null) {
+                                setState(() {
+                                  user = result;
+                                });
+                              }
+                            });
+                          } else {
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditInfo(argUser: user),
+                                )).then((result) {
+                              if (result != null) {
+                                setState(() {
+                                  user = result;
+                                });
+                              }
+                            });
+                          }
+                        },
+                        fillColor: Theme.of(context).textSelectionColor,
+                        elevation: 2.0,
+                        child: Icon(Icons.photo_camera,
+                            size: 20, color: Colors.white),
+                        shape: CircleBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text('ADD MEDIA',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 180, 180, 180))),
+                    Transform.translate(
+                        offset: Offset(20, -42),
+                        child: Transform.scale(
+                            scale: 0.8,
+                            child: Container(
+                                child: Transform.scale(
+                                    scale: 0.9,
+                                    child: Icon(Icons.add,
+                                        color: Theme.of(context).hintColor)),
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        spreadRadius: 5,
+                                        blurRadius: 10,
+                                        color:
+                                            Color.fromARGB(125, 100, 100, 100),
+                                      )
+                                    ],
+                                    shape: BoxShape.circle,
+                                    color: Colors.white)))),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ]),
     );
   }
 
+  Widget school(Map user) {
+    if (user == null) return Container(width: 0, height: 0);
+    if (user['school'] != null) {
+      return Transform.translate(
+          offset: Offset(0, -45),
+          child: Text('${user['school']}',
+              style: TextStyle(
+                  fontSize: 17, color: Color.fromARGB(255, 80, 80, 80))));
+    } else
+      return Container(width: 0, height: 0);
+  }
+
+  Widget companyJob(Map user) {
+    if (user == null) return Container(width: 0, height: 0);
+    if (user['company'] != null && user['job'] != null) {
+      return Transform.translate(
+          offset: Offset(0, -50),
+          child: Text('${user['job']} at ${user['company']}',
+              style: TextStyle(
+                  fontSize: 17, color: Color.fromARGB(255, 80, 80, 80))));
+    } else if (user['company'] == null && user['job'] != null) {
+      return Transform.translate(
+          offset: Offset(0, -50),
+          child: Text('${user['job']}',
+              style: TextStyle(
+                  fontSize: 17, color: Color.fromARGB(255, 80, 80, 80))));
+    } else if (user['company'] != null && user['job'] == null) {
+      return Transform.translate(
+          offset: Offset(0, -50),
+          child: Text('${user['company']}',
+              style: TextStyle(
+                  fontSize: 17, color: Color.fromARGB(255, 80, 80, 80))));
+    } else
+      return Container(width: 0, height: 0);
+  }
+
+  Widget showAge(var age, Map user) {
+    if (user['showage'] == '0') {
+      return Text(
+        ', ${age.toString()}',
+        style: TextStyle(
+            fontSize: 22,
+            color: Color.fromARGB(255, 80, 80, 80),
+            fontWeight: FontWeight.w500),
+      );
+    } else
+      return Container(width: 0, height: 0);
+  }
+
   Widget nameAge(var age, Map user) {
     if (user != null) {
-      return Text(
-        '${user['firstname']}, ${age.toString()}',
-        style: TextStyle(fontSize: 22),
-      );
+      return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          '${user['firstname']}',
+          style: TextStyle(
+              fontSize: 22,
+              color: Color.fromARGB(255, 80, 80, 80),
+              fontWeight: FontWeight.w500),
+        ),
+        showAge(age, user),
+      ]);
     } else
       return Text('');
   }

@@ -398,14 +398,12 @@ class _EditInfoState extends State<EditInfo> {
             }
           },
           child: Container(
-              child: Transform.translate(
-                  offset: Offset(0, 1),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: returnImage(image))),
-              decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 240, 240, 240),
-                  borderRadius: BorderRadius.all(Radius.circular(8)))),
+            width: MediaQuery.of(context).size.width * 0.26,
+            height: MediaQuery.of(context).size.height * 0.20,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: FittedBox(fit: BoxFit.fill, child: returnImage(image))),
+          ),
         ),
         addDeleteIcon(image, id),
       ]),

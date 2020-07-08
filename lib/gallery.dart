@@ -193,6 +193,7 @@ class GalleryState extends State<Gallery> {
   Future<Null> _cropImage() async {
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: _imageFile.path,
+        compressQuality: 100,
         aspectRatio: CropAspectRatio(ratioX: 6.68, ratioY: 10),
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Cropper',
