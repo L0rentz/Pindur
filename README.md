@@ -11,6 +11,7 @@ Currently the following features are implemented on both the front and the back 
 - Connection
 - Able to add and delete up to 9 images per user and informations about yourself
 - Age updated on birthday
+- Preview your public profile
 
 ## Current state of the project
 
