@@ -16,6 +16,7 @@ class UserCard extends StatefulWidget {
 
 class _UserCardState extends State<UserCard> {
   Map user;
+  int _current = 0;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _UserCardState extends State<UserCard> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> userphotos = displayImages();
     var age = 0;
     var monthoffset = 0;
     var dayoffset = 0;
@@ -60,16 +62,51 @@ class _UserCardState extends State<UserCard> {
                   children: [
                     CarouselSlider(
                       options: CarouselOptions(
-                        aspectRatio: 6.67 / 10,
-                        viewportFraction: 1,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: false,
-                        enlargeCenterPage: false,
-                        scrollDirection: Axis.horizontal,
+                          aspectRatio: 6.67 / 10,
+                          viewportFraction: 1,
+                          initialPage: 0,
+                          enableInfiniteScroll: false,
+                          reverse: false,
+                          autoPlay: false,
+                          enlargeCenterPage: false,
+                          scrollDirection: Axis.horizontal,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }),
+                      items: userphotos,
+                    ),
+                    Container(
+                      height: 15,
+                      decoration: BoxDecoration(boxShadow: [
+                        BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.8),
+                            offset: Offset(0, 10),
+                            blurRadius: 30),
+                      ]),
+                    ),
+                    Transform.translate(
+                      offset: Offset(0, 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: userphotos.map((url) {
+                          int index = userphotos.indexOf(url);
+                          return Container(
+                            width: changeBarSize(),
+                            height: 5.0,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 2.0),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                              color: _current == index
+                                  ? Color.fromRGBO(255, 255, 255, 1)
+                                  : Color.fromRGBO(0, 0, 0, 0.4),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                      items: displayImages(),
                     ),
                     Transform.translate(
                       offset: Offset(MediaQuery.of(context).size.width * 0.78,
@@ -132,6 +169,15 @@ class _UserCardState extends State<UserCard> {
         ]),
       ),
     );
+  }
+
+  double changeBarSize() {
+    int i = 1;
+    double size = 0.90;
+    for (; user['photo$i'] != null && i < 10; i++) {}
+    i--;
+    size = size / i;
+    return (MediaQuery.of(context).size.width * size);
   }
 
   Widget showAbout() {
@@ -246,7 +292,7 @@ class _UserCardState extends State<UserCard> {
   }
 
   List<Widget> displayImages() {
-    List<Widget> userphotos = List<Widget>();
+    List<Widget> listphotos = List<Widget>();
     String photo;
     String address;
     int i = 1;
@@ -254,9 +300,9 @@ class _UserCardState extends State<UserCard> {
     for (int list = 1; list < i; list++) {
       photo = user['photo$list'];
       address = 'http://192.168.31.37/pindur/$photo';
-      userphotos
-          .add(FittedBox(child: Image.network(address), fit: BoxFit.fill));
+      listphotos
+          .add(FittedBox(fit: BoxFit.fill, child: Image.network(address)));
     }
-    return userphotos;
+    return listphotos;
   }
 }

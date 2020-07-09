@@ -220,7 +220,6 @@ class _SignUpState extends State<SignUp> {
                   }
                   if ((monthoffset < 0) || (monthoffset == 0 && dayoffset > 0))
                     age--;
-                  print(age);
                   if (widget._formKey.currentState.validate() &&
                       (widget.repeatController.text ==
                           widget.passwordController.text) &&
